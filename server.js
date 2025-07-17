@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.use(express.static(__dirname));
+app.use(express.static(__dirname)); // Statik dosyaları servis et (index.html dahil)
 
 let players = [];
 let memes = [];
@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
   socket.on('startRound', () => {
     memes = [];
     votes = [];
-    currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+    currentPrompt = ["Örnek cümle"].[Math.floor(Math.random() * 1)]; // Geçici
     io.emit('startRound', currentPrompt);
   });
 
@@ -57,17 +57,8 @@ io.on('connection', (socket) => {
   });
 });
 
-const prompts = [
-  "Kardeşimin odasında cetvelin üstünde 8 cm işaretli olduğunu görmüşümdür.",
-  "Marketten aldığım yumurtalar konuşmaya başladı.",
-  "Kedim Zoom toplantısında patronumun koltuğuna oturdu.",
-  // Diğer prompt’ları buraya ekleyebilirsin
-];
-
-const memeList = [
-  { name: "Distracted Boyfriend", url: "https://i.imgflip.com/1ur9b0.jpg" },
-  { name: "Drake Hotline Bling", url: "https://i.imgflip.com/30b1gx.jpg" },
-  // Diğer meme’leri buraya ekleyebilirsin
-];
-
-module.exports = app; // Vercel için gerekli
+// Vercel serverless için
+module.exports = (req, res) => {
+  const path = req.url === '/' ? '/index.html' : req.url; // Ana sayfa için index.html’i servis et
+  app(req, res);
+};
