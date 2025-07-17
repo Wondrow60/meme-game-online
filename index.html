@@ -21,9 +21,14 @@
   <div id="gameContainer"></div>
   <div id="error"></div>
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-  <script>
-    const socket = io('https://meme-game-online-beta.vercel.app'); // Deploy sonrası URL’yi güncelle
-
+<script>
+  const socket = io('https://meme-game-online-beta.vercel.app');
+  socket.on('connect', () => {
+    console.log('Bağlandı!');
+  });
+  socket.on('disconnect', () => {
+    console.log('Bağlantı koptu!');
+  });
     const prompts = [
       "Kardeşimin odasında cetvelin üstünde 8 cm işaretli olduğunu görmüşümdür.",
       "Marketten aldığım yumurtalar konuşmaya başladı.",
