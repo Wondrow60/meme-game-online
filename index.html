@@ -21,25 +21,21 @@
   <div id="gameContainer"></div>
   <div id="error"></div>
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-<script>
-  const socket = io('https://meme-game-online-beta.vercel.app');
-  socket.on('connect', () => {
-    console.log('Bağlandı!');
-  });
-  socket.on('disconnect', () => {
-    console.log('Bağlantı koptu!');
-  });
+  <script>
+    const socket = io('https://meme-game-online-beta.vercel.app');
+    socket.on('connect', () => {
+      console.log('Bağlandı!');
+    });
+    socket.on('disconnect', () => {
+      console.log('Bağlantı koptu!');
+    });
+
     const prompts = [
-      "Kardeşimin odasında cetvelin üstünde 8 cm işaretli olduğunu görmüşümdür.",
-      "Marketten aldığım yumurtalar konuşmaya başladı.",
-      "Kedim Zoom toplantısında patronumun koltuğuna oturdu.",
-      // Diğer prompt’ları buraya ekleyebilirsin
+      "Örnek cümle", // Geçici, sonra 120 cümle eklenecek
     ];
 
     const memeList = [
-      { name: "Distracted Boyfriend", url: "https://i.imgflip.com/1ur9b0.jpg" },
-      { name: "Drake Hotline Bling", url: "https://i.imgflip.com/30b1gx.jpg" },
-      // Diğer meme’leri buraya ekleyebilirsin
+      { name: "Örnek Meme", url: "https://via.placeholder.com/150?text=Örnek+Meme" }, // Geçici
     ];
 
     let currentPrompt = "";
