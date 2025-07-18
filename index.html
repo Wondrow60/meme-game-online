@@ -18,138 +18,18 @@
   </style>
 </head>
 <body>
-  <div id="gameContainer"></div>
+  <div id="gameContainer">
+    <h1>Meme Eşleştirme Çılgınlığı</h1>
+    <p>İsim gir ve başla!</p>
+    <input id="playerName" placeholder="İsmini gir"><br>
+    <button onclick="alert('Katıl tuşu çalıştı!')">Katıl</button>
+  </div>
   <div id="error"></div>
-  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <!-- Socket.io geçici olarak devre dışı -->
   <script>
-    const socket = io('https://meme-game-online-beta.vercel.app');
-    socket.on('connect', () => {
-      console.log('Bağlandı!');
-    });
-    socket.on('disconnect', () => {
-      console.log('Bağlantı koptu!');
-    });
-
-    const prompts = [
-      "Örnek cümle", // Geçici, sonra 120 cümle eklenecek
-    ];
-
-    const memeList = [
-      { name: "Örnek Meme", url: "https://via.placeholder.com/150?text=Örnek+Meme" }, // Geçici
-    ];
-
-    let currentPrompt = "";
-    let memes = [];
-    let votes = [];
-    let players = [];
-    let scores = {};
-
     function init() {
-      document.getElementById("gameContainer").innerHTML = `
-        <h1>Meme Eşleştirme Çılgınlığı</h1>
-        <p>İsim gir ve başla!</p>
-        <input id="playerName" placeholder="İsmini gir"><br>
-        <button onclick="addPlayer()">Katıl</button>
-      `;
-      document.getElementById("error").innerHTML = "";
-      socket.emit('playerList', players);
+      console.log("Sayfa yüklendi!");
     }
-
-    function addPlayer() {
-      const nameInput = document.getElementById("playerName").value.trim();
-      if (nameInput && !players.includes(nameInput)) {
-        players.push(nameInput);
-        scores[nameInput] = scores[nameInput] || 0;
-        document.getElementById("playerName").value = "";
-        socket.emit('addPlayer', nameInput);
-        document.getElementById("gameContainer").innerHTML = `
-          <p>Katıldın, ${nameInput}! <button onclick="startRound()">Raundu Başlat</button></p>
-          <p>Katılanlar: ${players.join(", ") || "Henüz kimse yok"}</p>
-        `;
-      } else {
-        document.getElementById("error").innerHTML = "Lütfen geçerli bir isim gir!";
-      }
-    }
-
-    socket.on('playerList', (list) => {
-      players = list;
-      document.getElementById("gameContainer").innerHTML = `
-        <p>Katıldın, ${players[players.length - 1]}! <button onclick="startRound()">Raundu Başlat</button></p>
-        <p>Katılanlar: ${players.join(", ") || "Henüz kimse yok"}</p>
-      `;
-    });
-
-    function startRound() {
-      socket.emit('startRound');
-    }
-
-    socket.on('startRound', (prompt) => {
-      currentPrompt = prompt;
-      memes = [];
-      votes = [];
-      showMemeSelection();
-    });
-
-    function showMemeSelection() {
-      const memeOptions = memeList.map((m, i) => `
-        <div class="meme" onclick="submitMeme(${i})">
-          <img src="${m.url}" alt="${m.name}" onerror="this.src='https://via.placeholder.com/150?text=Meme+Yüklenemedi'">
-          <p>${m.name}</p>
-        </div>
-      `).join("");
-      document.getElementById("gameContainer").innerHTML = `
-        <h2>${currentPrompt}</h2>
-        <p>Sıra ${players[memes.length % players.length]}'da!</p>
-        <div id="memes">${memeOptions}</div>
-        <p>Seçilenler: ${memes.length}/${players.length}</p>
-      `;
-    }
-
-    function submitMeme(index) {
-      const selectedMeme = memeList[index];
-      socket.emit('submitMeme', { player: players[memes.length % players.length], url: selectedMeme.url, name: selectedMeme.name });
-    }
-
-    socket.on('showMemes', (memesData) => {
-      memes = memesData;
-      const memeListDisplay = memes.map((m, i) => `
-        <div class="meme">
-          <p>${m.player} seçti:</p>
-          <img src="${m.url}" alt="${m.name}" onerror="this.src='https://via.placeholder.com/150?text=Meme+Yüklenemedi'">
-          <p>${m.name}</p>
-        </div>
-      `).join("");
-      document.getElementById("gameContainer").innerHTML = `
-        <h2>Oylama Zamanı!</h2>
-        <p>Soru: ${currentPrompt}</p>
-        <div id="memes">${memeListDisplay}</div>
-      `;
-    });
-
-    socket.on('updateVotes', (voteCount) => {
-      document.getElementById("gameContainer").innerHTML = `
-        <h2>Oylama Zamanı!</h2>
-        <p>Soru: ${currentPrompt}</p>
-        <div id="memes">${document.getElementById("memes").innerHTML}</div>
-        <p>${voteCount}/${players.length} oy kullanıldı</p>
-      `;
-    });
-
-    socket.on('showResults', (data) => {
-      scores[data.winner] = (scores[data.winner] || 0) + 5;
-      const resultText = `
-        <h2>Kazanan: ${data.winner}!</h2>
-        <p><img src="${data.meme.url}" alt="${data.meme.name}" onerror="this.src='https://via.placeholder.com/150?text=Meme+Yüklenemedi'"><br>${data.meme.name}</p>
-        <p>Puanlar: ${Object.keys(scores).map(p => `${p}: ${scores[p]}`).join(", ")}</p>
-        <button onclick="startRound()">Yeni Raund</button>
-      `;
-      document.getElementById("gameContainer").innerHTML = resultText;
-    });
-
-    function vote(index) {
-      socket.emit('vote', index);
-    }
-
     init();
   </script>
 </body>
