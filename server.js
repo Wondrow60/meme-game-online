@@ -29,7 +29,6 @@ io.on('connection', (socket) => {
   socket.on('startRound', () => {
     memes = [];
     votes = [];
-    // Düzeltme: Random prompt seçimi
     const tempPrompts = ["Örnek cümle"]; // Geçici bir dizi
     currentPrompt = tempPrompts[Math.floor(Math.random() * tempPrompts.length)];
     io.emit('startRound', currentPrompt);
